@@ -1,5 +1,5 @@
 from docker import Client
-from docker import tls
+from docker import tls, constants
 import ssl
 import os
 
@@ -32,4 +32,8 @@ def docker_client():
         )
 
     timeout = int(os.environ.get('DOCKER_CLIENT_TIMEOUT', 60))
-    return Client(base_url=base_url, tls=tls_config, version='1.18', timeout=timeout)
+    # Get the version of the docker API based on the env
+    docker_version = os.environ.get("COMPOSE_DOCKER_API_VERSION",
+                                    constants.DEFAULT_DOCKER_API_VERSION)
+    return Client(base_url=base_url, tls=tls_config, version=docker_version,
+                  timeout=timeout)
